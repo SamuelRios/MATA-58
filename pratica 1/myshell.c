@@ -5,7 +5,7 @@
 
 int main(){
 
-    char commandl[] = "";
+    char* commandl = (char*) malloc(sizeof(char) * 4097);
 
     if(commandl != NULL){
 
@@ -21,9 +21,9 @@ int main(){
             int wcount = 0;
             words[wcount] = strtok(commandl, " ");
             while(wcount < 100 && words[wcount]){
-                // printf("%s\n", words[wcount] );
-                // words[wcount] = strtok(NULL, " ");
-                // wcount++;
+                printf("%s\n", words[wcount] );
+                words[wcount] = strtok(NULL, " ");
+                wcount++;
             }
             printf("myshell> ");
             fflush(stdout);
