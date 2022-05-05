@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 char* removeBreakLine(char* s){
     int length = (int)strlen(s);
@@ -16,6 +17,17 @@ char* removeBreakLine(char* s){
     } else return s;
 }
 
+int start(){
+    int pid = fork();
+    if(pid > 0){
+        printf("child process id: %d\n", pid);
+    }else{
+        sleep(10);
+        printf("bye");
+    }
+    return pid;
+}
+
 int main(){
 
     char* commandl = (char*) malloc(sizeof(char) * 4097);
@@ -25,6 +37,7 @@ int main(){
         printf("myshell> ");
         fflush(stdout);
 
+        int processes = 0;
         while(fgets(commandl, 4097, stdin) != NULL) {
 
             char* words[100];
@@ -45,9 +58,23 @@ int main(){
             if(strcmp("quit", words[0]) == 0 || strcmp("exit", words[0]) == 0)
                 return 0;
             else if(strcmp("start", words[0]) == 0 ){
+                processes++;
+                int returnId = start();
                 
+                if(returnId == 0)
+                    return 0;
             } else if(strcmp("wait", words[0]) == 0 ){
-
+                
+                while(processes > 0){
+                    printf("%d\n", processes);
+                    int* wstatus;
+                    int pid = wait(wstatus);
+                    printf("%d", WIFEXITED(*wstatus));
+                    if(!WIFEXITED(*wstatus)){
+                        printf("%d terminou\n", pid);
+                    }
+                    processes--;
+                }
             } else if(strcmp("run", words[0]) == 0 ){
 
             } else if(strcmp("stop", words[0]) == 0 ){
@@ -55,7 +82,8 @@ int main(){
             } else if(strcmp("continue", words[0]) == 0 ){
 
             } else printf("myshell: comando desconhecido: %s\n\n", words[0]);
-            
+
+            free(words[wcount -1]);
             printf("myshell> ");
             fflush(stdout);
         }
