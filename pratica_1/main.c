@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <errno.h>
+#include <signal.h>
 
 #include "functions.c"
 
@@ -35,10 +36,7 @@ int main(){
                 return 0;
             else if(strcmp("start", words[0]) == 0 ){
                 if(wcount > 1){
-                    processes++;
-                    int returnId = start(words, wcount);
-                    if(returnId == 0)
-                        return 0;
+                    start(words);
                 } else {
                     printf("myshell: o comando start deve possuir argumento(s).\n");
                 }
@@ -46,9 +44,32 @@ int main(){
                 waitProcess();
             } else if(strcmp("run", words[0]) == 0 ){
 
+                if(wcount > 1){
+                    runprocess(words);
+                } else {
+                    printf("myshell: o comando run deve possuir argumento(s).\n");
+                }
+               
+            } else if(strcmp("kill", words[0]) == 0 ){
+
+                if(wcount == 2){
+                    killProcess(words[1]);
+                } else if(wcount == 1) printf("myshel: o comando kill deve possuir um argumento.\n");
+                else printf("myshell: há muitos argumentos para o comando kill.\n");
+
             } else if(strcmp("stop", words[0]) == 0 ){
 
+                if(wcount == 2){
+                    stopProcess(words[1]);
+                } else if(wcount == 1) printf("myshel: o comando stop deve possuir um argumento.\n");
+                else printf("myshell: há muitos argumentos para o comando stop.\n");
+
             } else if(strcmp("continue", words[0]) == 0 ){
+
+                if(wcount == 2){
+                    continueProcess(words[1]);
+                } else if(wcount == 1) printf("myshel: o comando continue deve possuir um argumento.\n");
+                else printf("myshell: há muitos argumentos para o comando stop.\n");
 
             } else {
                 if(strlen(words[0]) > 0)
