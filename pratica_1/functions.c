@@ -1,4 +1,4 @@
-char* removeBreakLine(char* s){
+char* removeBreakLine(char* s) {
     int length = (int)strlen(s);
     if(s[length-1] == '\n') {
         char* copy = malloc(sizeof(char) * length);
@@ -11,7 +11,7 @@ char* removeBreakLine(char* s){
     } else return s;
 }
 
-int start(char** words){
+int start(char** words) {
 
     errno = 0;
     int pid = fork();
@@ -25,16 +25,16 @@ int start(char** words){
             printf("myshell: erro: função não implementada. (fork, ENOSYS)");
         }     
     } else if(pid ==0){
-        sleep(10);
         char** args = (char**) words+1;
         execvp(args[0],  args);
         return pid;
     }
-    printf("%d\n", pid);
+    if(strcmp("start", words[0]) == 0)
+        printf("myshell: processo %d iniciado.\n", pid);
     return pid;
 }
 
-void waitProcess(){
+void waitProcess() {
     int* wstatus;
 
     errno = 0;
@@ -46,9 +46,9 @@ void waitProcess(){
         if(myerrno == 10)
             printf("myshell: não há processos restantes.\n");
         else if(myerrno == 11)
-             printf("myshell: erro: o descritor de arquivo PID especificado em id não é bloqueante e o processo ao qual ele se refere não foi finalizado.\n");
+             printf("myshell: erro: o descritor de arquivo PID especificado em id não é bloqueante e o processo ao qual ele se refere não foi finalizado. (wait, EAGAIN)\n");
         else if(myerrno == 3)
-             printf("myshell: erro: pid é igual a INT_MIN.");
+             printf("myshell: erro: pid é igual a INT_MIN., (wait, ESRCH)");
 
     } else {
         if(!WIFEXITED(*wstatus)){
